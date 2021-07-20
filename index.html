@@ -33,6 +33,7 @@
 
     .mask{
       content:'';
+      display: none;
     }
 
     .mask::before{
@@ -57,7 +58,7 @@
 
     .clip-path{
       -webkit-clip-path: ellipse(28% 46% at 50% 49%);
-clip-path: ellipse(28% 46% at 50% 49%);
+      clip-path: ellipse(28% 46% at 50% 49%);
     }
   </style>
 </head>
@@ -93,21 +94,21 @@ clip-path: ellipse(28% 46% at 50% 49%);
         })
 
         window.addEventListener("load",function(){
-        console.log("on load");
-        isMobile = mobileCheck();
-        updateSizes();
+            console.log("on load");
+            isMobile = mobileCheck();
+            updateSizes();
         })
 
         function updateSizes(){
-        let ele = document.getElementsByClassName('content')[0];
-        console.log("ismobile",isMobile);
-        if(isMobile){
-                ele.style.height = '60vh';
-                ele.style.maxWidth = 'auto';
-        }else{
-                ele.style.maxWidth = '450px';
-                ele.style.height = 'auto';
-        }
+            let ele = document.getElementsByClassName('content')[0];
+            console.log("ismobile",isMobile);
+            if(isMobile){
+                    ele.style.height = '60vh';
+                    ele.style.maxWidth = 'auto';
+            }else{
+                    ele.style.maxWidth = '450px';
+                    ele.style.height = 'auto';
+            }
         }
 
         class Webcam{
@@ -129,6 +130,27 @@ clip-path: ellipse(28% 46% at 50% 49%);
           onSuccessGettingUserMedia(stream){
 
             var videoEls = document.getElementsByTagName('video');
+            let mask = document.getElementsByClassName('mask')[0];
+                mask.style.display = 'block';
+                let styleElem = document.head.appendChild(document.createElement("style"));
+                if(isMobile){
+                    styleElem.innerHTML = `.mask:before {
+                        background: transparent;
+                        box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
+                        width: 80%;
+                        height: 70%;
+                        content: '';
+                        display: block;
+                        border-radius: 60% 60% 60% 60% / 60% 60% 60% 60%;
+
+                        position: absolute;
+                        top:-130px;
+                        left: 50%;
+                        transform: translate(-50%,50%);
+                    }`;
+
+                }
+                
             for(let i = 0 ; i < videoEls.length ; i++){
               let video = videoEls[i];
               console.log("vio",video);
