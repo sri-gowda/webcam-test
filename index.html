@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navigator & Media Devices</title>
+  <style>
+    body{
+      background: #fff;
+    }
+
+    .main-container{
+      display: flex;
+      justify-content: center;
+    }
+    .container{
+      background:#fff;
+      height: 260px;
+      position: relative;
+      overflow:hidden;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    }
+
+    .content{
+      /* background: green; */
+      height: 300px;
+      margin:auto;
+      display:block;
+      transform: rotateY(180deg);
+      -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+      -moz-transform:rotateY(180deg); /* Firefox */
+    }
+
+    .mask{
+      content:'';
+    }
+
+    .mask::before{
+          background: transparent;
+          box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
+          width: 200px;
+          height: 220px;
+          content: '';
+          display: block;
+          border-radius: 60% 60% 60% 60% / 60% 60% 60% 60%;
+
+          position: absolute;
+          top:-100px;
+          left: 50%;
+          transform: translate(-50%,50%);
+    }
+
+    .shadow{
+     opacity: 0.25;
+     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    }
+
+    .clip-path{
+      -webkit-clip-path: ellipse(28% 46% at 50% 49%);
+clip-path: ellipse(28% 46% at 50% 49%);
+    }
+  </style>
+</head>
+<body>
+    <h1>Navigator & Media Devices</h1>
+    <div class="main-container">
+      <div class="container">
+        <!-- <video class="shadow"></video>
+        <video class="clip-path"></video> -->
+          <video class="content"></video>
+        <div class="mask"></div>
+      </div>
+    </div>
+    
+   
+    <br/>
+    <button id="cam">Start Camera</button>
+    <script>
+      (function(){
+
+        class Webcam{
+
+          constructor(){
+            this.mediaDevices = navigator.mediaDevices;
+          }
+
+          getUserPermissions(){
+            this.userMedia = this.mediaDevices.getUserMedia({video:true,audio:true});
+          }
+
+          startCamera(){
+            if(!this.userMedia){
+              throw new Error("No userMedia found");
+            }
+            this.userMedia.then(this.onSuccessGettingUserMedia).catch(this.onErrorGettiingUserMedia)
+          }
+          onSuccessGettingUserMedia(stream){
+
+            var videoEls = document.getElementsByTagName('video');
+            for(let i = 0 ; i < videoEls.length ; i++){
+              let video = videoEls[i];
+              console.log("vio",video);
+                // video.style.transform = 'rotateY(180deg)';
+            // Older browsers may not have srcObject
+            if ("srcObject" in video) {
+              video.srcObject = stream;
+
+            } else {
+              // Avoid using this in new browsers, as it is going away.
+              video.src = window.URL.createObjectURL(stream);
+            }
+            video.onloadedmetadata = function(e) {
+              video.muted = true;
+              video.play();
+            };
+            }
+          }
+          onErrorGettiingUserMedia(err){
+            console.log(err.name + ": " + err.message);
+          }
+        }
+        
+        let webcam = new Webcam();
+            webcam.getUserPermissions();
+        let camRef = document.getElementById("cam");
+            camRef.addEventListener("click", function(e){
+                console.log("webcam",webcam);
+                webcam.startCamera();
+            });
+      })();
+    </script>
+</body>
+</html>
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title> js call camera via the browser </title>
+  <style>
+    video{
+      transform: rotateY(180deg);
+    }
+  </style>
+</head>
+<body>
+
+<div class="banner">
+<video id="video" width="500px" height="500px" autoPlay="autoplay" controls="controls" />
+</div>
+
+</body>
+
+<script>
+function getMedia() {
+  let video = document.getElementById('video');
+  let constraints = {
+    video: { width: 400, height: 500 },
+    audio: false
+  };
+  navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+  let promise = navigator.mediaDevices.getUserMedia(
+    constraints,
+    function(stream) {
+      video.src = stream;
+      video.play();
+    },
+    function(error) {
+      console.log(error);
+    }
+  );
+  promise.then(function(MediaStream) {
+    video.srcObject = MediaStream;
+    video.play();
+  });
+}
+
+getMedia();
+</script>
+</html> -->
